@@ -4,7 +4,39 @@
 
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Status: Early Stage](https://img.shields.io/badge/status-early--stage-orange.svg)]()
+[![PyPI](https://img.shields.io/pypi/v/pact-protocol?label=pact-protocol)](https://pypi.org/project/pact-protocol/)
+[![PyPI](https://img.shields.io/pypi/v/pact-ax-client?label=pact-ax-client)](https://pypi.org/project/pact-ax-client/)
+
+---
+
+## Install
+
+```bash
+pip install pact-protocol      # core intent protocol
+pip install pact-langchain     # LangChain integration
+pip install pact-ax-client     # multi-agent collaboration SDK
+```
+
+---
+
+## 30-second quickstart
+
+```python
+from pact_ax_client import Agent
+
+agent = Agent("my-agent", base_url="http://localhost:8000")
+agent.register_capability("contract_review", description="Reviews NDAs")
+
+decision = agent.route("contract_review")
+if decision.routed:
+    result = agent.handoff(decision.best_agent, state_data={"doc": "..."})
+    agent.remember("contract_review",
+                   partner_id=decision.best_agent,
+                   outcome="positive")
+```
+
+→ Full SDK docs: [neurobloomai/pact-ax-client](https://github.com/neurobloomai/pact-ax-client)  
+→ Server + primitives: [neurobloomai/pact-ax](https://github.com/neurobloomai/pact-ax)
 
 ---
 
@@ -61,37 +93,39 @@ PACT converts RI into RQ. It is the accounting system that makes trust measurabl
 
 ---
 
-## PACT-AX: The Entry Point
+## What's Built
 
-**PACT-AX** is a relational security proxy layer sitting between MCP clients and servers.
+PACT-AX is the live entry point — agent collaboration primitives with a REST API and Python SDK:
 
-It detects what policy engines miss: behavioral drift that accumulates across sessions without triggering any single rule violation.
+| Primitive | What it does |
+|-----------|-------------|
+| **Capabilities** | Register and discover agent skills |
+| **Trust** | Persistent, weighted trust scores that evolve from real outcomes |
+| **Router** | Route tasks to the best trusted + capable agent |
+| **Episodic Memory** | Record and recall past interactions |
+| **Handoff / Transfer** | Prepare → send → receive state packets |
+| **Dead Letter Queue** | Park failed deliveries for retry with exponential backoff |
+| **Consensus** | Weighted-vote decisions across agents |
 
-### The Authority Boundary Check
-
-The first PACT-AX service offering. Three questions asked on every agent interaction:
-
-1. **Is this agent acting within its authorized scope?**
-2. **Has its behavior drifted from its established baseline?**
-3. **Has a rupture occurred — and if so, has it been acknowledged and recovered from?**
-
-No existing system answers all three. Most answer none.
+```bash
+pip install pact-ax-client
+```
 
 ---
 
-## How It Works
+## How PACT Trust Works
 
 PACT uses a three-layer trust measurement architecture:
 
 ```
-StoryKeeper     — Long behavioral baseline. What has this agent consistently been?
-Rupture Detection (RLP-0) — Recency-sensitive drift detection. What just changed?
-Trust Score     — Weighted synthesis. What does the full pattern say?
+StoryKeeper        — Long behavioral baseline. What has this agent consistently been?
+Rupture Detection  — Recency-sensitive drift detection. What just changed?
+Trust Score        — Weighted synthesis. What does the full pattern say?
 ```
 
 **StoryKeeper** maintains the long behavioral baseline — the agent's relational history.
 
-**Rupture Detection (RLP-0)** flags when recent behavior deviates from that baseline. Recency-sensitive by design — because drift that just started is more dangerous than drift that resolved.
+**Rupture Detection** flags when recent behavior deviates from that baseline. Recency-sensitive by design — drift that just started is more dangerous than drift that resolved.
 
 **Trust Score** synthesizes both into a queryable, portable signal: this agent's demonstrated trustworthiness, weighted by recency and severity.
 
@@ -111,14 +145,14 @@ A Stable Packet is not a credential. It's a track record.
 
 ## RLP-0: Relational Ledger Protocol
 
-The state primitive underlying PACT.
-
-Three-layer design:
+The state primitive underlying PACT. Three-layer design:
 - **Semantic layer** — what was intended
 - **Protocol layer** — what was communicated
 - **Storage layer** — what was recorded and persisted
 
-RLP-0's design philosophy: **serve, not resolve.** It maintains relational tensions rather than collapsing them into false certainty. The ledger records drift — it doesn't adjudicate it.
+RLP-0's design philosophy: **serve, not resolve.** It maintains relational tensions rather than collapsing them into false certainty.
+
+→ [neurobloomai/rlp-0](https://github.com/neurobloomai/rlp-0)
 
 ---
 
@@ -127,35 +161,33 @@ RLP-0's design philosophy: **serve, not resolve.** It maintains relational tensi
 - Not an agent framework — PACT doesn't build agents
 - Not a policy engine — PACT doesn't write rules
 - Not a competitor to MCP — PACT sits on top of MCP
-- Not a monitoring dashboard — PACT is infrastructure, not tooling built on infrastructure
+- Not a monitoring dashboard — PACT is infrastructure, not tooling
 - Not a product that pivots — PACT is substrate
 
 > *Substrate doesn't pivot.*
 
 ---
 
-## Current Status
+## The Ecosystem
 
-Early stage. PACT-AX is the active development focus.
-
-The infrastructure being built:
-- RLP-0 state primitive
-- Authority Boundary Check (v0.1)
-- StoryKeeper baseline architecture
-- Rupture Detection layer
-- Trust Score query interface
-
-PACT-HX (human experience layer) is deprioritized. PACT-AX is the entry point.
+| Repo | What it is |
+|---|---|
+| [`pact`](https://github.com/neurobloomai/pact) | This repo — protocol spec and core concepts |
+| [`pact-ax`](https://github.com/neurobloomai/pact-ax) | Agent collaboration server (84 REST routes, 743 tests) |
+| [`pact-ax-client`](https://github.com/neurobloomai/pact-ax-client) | Python SDK — `pip install pact-ax-client` |
+| [`pact-hx`](https://github.com/neurobloomai/pact-hx) | Human experience layer |
+| [`pact-demos`](https://github.com/neurobloomai/pact-demos) | Runnable reference implementations |
+| [`rlp-0`](https://github.com/neurobloomai/rlp-0) | Relational Ledger Protocol state primitive |
 
 ---
 
 ## Who This Is For
 
-**Security teams** deploying AI agents and asking: *how do we know if an agent starts behaving outside its authorized boundary?*
+**Security teams** deploying AI agents: *how do we know if an agent starts behaving outside its authorized boundary?*
 
-**Platform builders** deploying MCP-native architectures and asking: *what does post-deployment accountability look like?*
+**Platform builders** deploying MCP-native architectures: *what does post-deployment accountability look like?*
 
-**GovCon and enterprise** asking: *how do we demonstrate that our AI systems are behaving as approved — not just at deployment, but over time?*
+**Enterprise and GovCon**: *how do we demonstrate our AI systems are behaving as approved — not just at deployment, but over time?*
 
 ---
 
@@ -170,44 +202,19 @@ Invisible substrate. Completing infrastructure. The layer that makes everything 
 
 ---
 
-## Repository Structure
-
-```
-pact/
-├── pact_protocol/       # Core PACT protocol implementation
-├── spec/                # Protocol specification
-├── schemas/             # RLP-0 and Stable Packet schemas
-├── examples/            # Reference implementations
-├── docs/                # Documentation
-└── tests/               # Test suite
-```
-
----
-
 ## Contributing
 
 PACT is open source. The trust layer for AI infrastructure should be community-owned — not vendor-controlled.
 
-If you're working on:
-- MCP deployments and thinking about post-deployment accountability
-- Multi-agent coordination and behavioral verification
-- AI governance and authority boundary enforcement
+If you're working on MCP deployments, multi-agent coordination, or AI governance — we want to hear from you.
 
-We want to hear from you.
-
-**GitHub:** [github.com/neurobloomai/pact](https://github.com/neurobloomai/pact)  
-**Email:** [support@neurobloom.ai](mailto:support@neurobloom.ai)  
-**LinkedIn:** [NeuroBloom AI](https://www.linkedin.com/company/neurobloomdotai/)
+**GitHub:** [github.com/neurobloomai](https://github.com/neurobloomai)  
+**Email:** [support@neurobloom.ai](mailto:support@neurobloom.ai)
 
 ---
 
 ## License
 
-MIT License — see [LICENSE](./LICENSE) for details.
+MIT — open protocols, community ownership, infrastructure that endures.
 
-Open protocols. Community ownership. Infrastructure that endures.
-
----
-
-*Built by [NeuroBloom AI](https://www.neurobloom.ai)*  
-*The trust layer BigTech assumed existed. We're building it.*
+*Built by [NeuroBloom AI](https://neurobloom.ai) — the trust layer BigTech assumed existed.*
