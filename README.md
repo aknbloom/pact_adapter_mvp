@@ -14,7 +14,8 @@
 ```bash
 pip install pact-protocol      # core intent protocol
 pip install pact-langchain     # LangChain integration
-pip install pact-ax-client     # multi-agent collaboration SDK
+pip install pact-ax            # multi-agent collaboration server
+pip install pact-ax-client     # Python SDK for pact-ax
 ```
 
 ---
