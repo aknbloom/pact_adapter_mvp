@@ -182,6 +182,7 @@ RLP-0's design philosophy: **serve, not resolve.** It maintains relational tensi
 | [`pact-ax-client`](https://github.com/neurobloomai/pact-ax-client) | Python SDK — `pip install pact-ax-client` |
 | [`pact-hx`](https://github.com/neurobloomai/pact-hx) | Human experience layer |
 | [`pact-demos`](https://github.com/neurobloomai/pact-demos) | Runnable reference implementations |
+| [`pact-ax-demo`](https://github.com/neurobloomai/pact-ax-demo) | Minimal podcast demo — intent degradation without/with PACT, no API keys |
 | [`rlp-0`](https://github.com/neurobloomai/rlp-0) | Relational Ledger Protocol state primitive |
 
 ---
