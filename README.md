@@ -183,6 +183,8 @@ RLP-0's design philosophy: **serve, not resolve.** It maintains relational tensi
 | [`pact-hx`](https://github.com/neurobloomai/pact-hx) | Human experience layer |
 | [`pact-demos`](https://github.com/neurobloomai/pact-demos) | Runnable reference implementations |
 | [`pact-ax-demo`](https://github.com/neurobloomai/pact-ax-demo) | Minimal podcast demo — intent degradation without/with PACT, no API keys |
+| [`pact-a2a`](https://github.com/neurobloomai/pact-a2a) | A2A 1.0 intent-fidelity adapter — `origin_intent` referenced, never reconstructed |
+| [`pact-a2a-demo`](https://github.com/neurobloomai/pact-a2a-demo) | Refund fidelity demo — intent degradation across real A2A hops, without/with PACT |
 | [`rlp-0`](https://github.com/neurobloomai/rlp-0) | Relational Ledger Protocol state primitive |
 
 ---
